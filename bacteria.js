@@ -1,11 +1,11 @@
 class Bacteria {
-    r = 40;   
+    r = 0;   
 
-    constructor(x, y) {
+    constructor(x, y, r) {
         // this.pos = new p5.Vector(x, y);
         this.x = x
         this.y = y
-        this.r = 40;
+        this.r = r;
     }
 
     show() {

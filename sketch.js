@@ -5,6 +5,9 @@ let seed = 0;
 let n = 0;
 let bg = 210;
 
+let bacteriaArray = []
+let bacteriaCount = 2
+
 let grainX = 0;
 let grainY = 0;
 let grains = 800;
@@ -13,8 +16,9 @@ let grainsArray = []
 let grainSpeed = 0.0001
 let b;
 
+
 function setup() {
-    b = new Bacteria(200, 200)
+    initBacteria()
     console.log("p5 is running!");
     createCanvas(canvasW, canvasH);
     background(bg,bg,bg);
@@ -23,24 +27,33 @@ function setup() {
 
 function draw() {
     drawBG()
-    
     loadPixels()
-    
     getPixels()
     updatePixels()
 
-    b.show()
-    // riseGrains()
-    // applyGrainFilter()
+    riseGrains()
+    applyGrainFilter()
+}
+
+function initBacteria() {
+    b = new Bacteria(200, 200, 1000)
+    for(let i = 0; i < bacteriaCount; i++) {
+        bacteriaArray[i] = new Bacteria(random(canvasW), random(canvasW), 1000)
+    }
 }
 
 function getPixels() {
-    for (let x = 0; x < canvasW; x++) {
-        for (let y = 0; y < canvasH; y++) {
-            let index = x + y * canvasW;
-            let d = dist(x, y, b.x, b.y);
-            let c = 1000 * b.r / d;
-            pixels[index] = color(c);
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
+        let sum = 0;
+        for (i = 0; i < bacteriaArray.length; i++) {
+            let xdif = x - bacteriaArray[i].x;
+            let ydif = y - bacteriaArray[i].y;
+            let d = sqrt((xdif * xdif) + (ydif * ydif));
+            sum += 10 * bacteriaArray[i].r / d;
+        }
+
+        set(x, y, color(sum, sum, sum));
         }
     }
 }
