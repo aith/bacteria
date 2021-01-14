@@ -11,38 +11,47 @@ let grains = 800;
 let grainColor = 0;
 let grainsArray = []
 let grainSpeed = 0.0001
-
-class grain {
-    constructor(x, y, col) {
-        this.x = x
-        this.y = y
-        this.color = col
-    }
-}
+let b;
 
 function setup() {
+    b = new Bacteria(200, 200)
     console.log("p5 is running!");
     createCanvas(canvasW, canvasH);
     background(bg,bg,bg);
-    grainColor = color(155,155,155,122)
     initGrains()
-    print(grainsArray[200])
 }
 
 function draw() {
     drawBG()
-    drawBacteria()
-    riseGrains()
-    applyGrainFilter()
+    
+    loadPixels()
+    
+    getPixels()
+    updatePixels()
+
+    b.show()
+    // riseGrains()
+    // applyGrainFilter()
+}
+
+function getPixels() {
+    for (let x = 0; x < canvasW; x++) {
+        for (let y = 0; y < canvasH; y++) {
+            let index = x + y * canvasW;
+            let d = dist(x, y, b.x, b.y);
+            let c = 1000 * b.r / d;
+            pixels[index] = color(c);
+        }
+    }
 }
 
 function drawBG() {
     background(bg)
 }
 
-// function drawBacteria() {
-//     ellipse(56, 46, 55, 55);
-// }
+function drawBacteria() {
+    ellipse(56, 46, 55, 55);
+}
 
 function applyGrainFilter() {
     drawGrains()
@@ -53,7 +62,7 @@ function initGrains() {
         let y = random(canvasH)
         let colScale = random(bg-40, bg+40)
         let col = color(colScale,colScale,colScale,230)
-        grainsArray[i] = new grain(random(canvasW), y, col)
+        grainsArray[i] = new Grain(random(canvasW), y, col)
     }
 }
 
