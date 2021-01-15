@@ -1,21 +1,23 @@
 let canvasW = 400;
 let canvasH = 400;
 
-let seed = 0;
 let n = 0;
-let bg = 210;
+let bg = 50;
 
 let bacteriaArray = []
-let bacteriaCount = 2
+let bacteriaCount
+let bacteriaSizeMin = 800
+let bacteriaSizeMax = 2000
 
 let grainX = 0;
 let grainY = 0;
-let grains = 800;
+let grains = 2000;
 let grainColor = 0;
 let grainsArray = []
 let grainSpeed = 0.0001
 let b;
 
+let seed = 0;
 
 function setup() {
     initBacteria()
@@ -23,26 +25,32 @@ function setup() {
     createCanvas(canvasW, canvasH);
     background(bg,bg,bg);
     initGrains()
+    createButton("reimagine").mousePressed(() => seed++);
 }
 
 function draw() {
+    randomSeed(seed);
     drawBG()
+
     loadPixels()
-    getPixels()
+    buildMetaballs()
     updatePixels()
 
     riseGrains()
     applyGrainFilter()
+    filter(INVERT)
 }
 
 function initBacteria() {
-    b = new Bacteria(200, 200, 1000)
+    bacteriaCount = random(2,4)
     for(let i = 0; i < bacteriaCount; i++) {
-        bacteriaArray[i] = new Bacteria(random(canvasW), random(canvasW), 1000)
+        bacteriaArray[i] = new Bacteria(random(canvasW), random(canvasH), random(bacteriaSizeMin, bacteriaSizeMax))
     }
 }
 
-function getPixels() {
+// metaballs
+// https://www.youtube.com/watch?v=ccYLb7cLB1I
+function buildMetaballs() {
     for (x = 0; x < width; x++) {
         for (y = 0; y < height; y++) {
         let sum = 0;
@@ -50,10 +58,10 @@ function getPixels() {
             let xdif = x - bacteriaArray[i].x;
             let ydif = y - bacteriaArray[i].y;
             let d = sqrt((xdif * xdif) + (ydif * ydif));
-            sum += 10 * bacteriaArray[i].r / d;
+            sum += 2 * bacteriaArray[i].r / d;
         }
-
-        set(x, y, color(sum, sum, sum));
+        let mod = 90;
+        set(x, y, color(sum % mod, sum % mod, sum % mod));
         }
     }
 }
@@ -73,7 +81,7 @@ function applyGrainFilter() {
 function initGrains() {
     for (let i = 0; i < grains; i++) {
         let y = random(canvasH)
-        let colScale = random(bg-40, bg+40)
+        let colScale = random(bg-20, bg+60)
         let col = color(colScale,colScale,colScale,230)
         grainsArray[i] = new Grain(random(canvasW), y, col)
     }
@@ -90,7 +98,7 @@ function drawGrains() {
 
 function riseGrains() {
     for (let i = 0; i < grainsArray.length; i++) {
+        grainsArray[i].x = (grainsArray[i].x + random(-2,2) * .01) % canvasW
         grainsArray[i].y = (grainsArray[i].y + (millis() % 1000) * grainSpeed) % canvasH;
     }
 }
-
