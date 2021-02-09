@@ -21,11 +21,23 @@ let seed = 0;
 
 function setup() {
     initBacteria()
-    console.log("p5 is running!");
     createCanvas(canvasW, canvasH);
     background(bg,bg,bg);
     initGrains()
-    createButton("reimagine").mousePressed(() => seed++);
+    createButton("Reimagine").mousePressed(reimagine);
+}
+
+function reimagine() {
+    seed++
+    resetSketch()
+}
+
+function resetSketch() {
+    for(let i = 0; i < bacteriaArray.length; i++) {
+        bacteriaArray.pop();
+    }
+    initBacteria()
+    initGrains()
 }
 
 function draw() {
@@ -44,7 +56,11 @@ function draw() {
 function initBacteria() {
     bacteriaCount = random(2,4)
     for(let i = 0; i < bacteriaCount; i++) {
-        bacteriaArray[i] = new Bacteria(random(canvasW), random(canvasH), random(bacteriaSizeMin, bacteriaSizeMax))
+        bacteriaArray[i] = new Bacteria(
+            random() * canvasW,
+            random() * canvasH,
+            random(bacteriaSizeMin, bacteriaSizeMax)
+        )
     }
 }
 
@@ -80,7 +96,7 @@ function applyGrainFilter() {
 
 function initGrains() {
     for (let i = 0; i < grains; i++) {
-        let y = random(canvasH)
+        let y = random() * canvasH
         let colScale = random(bg-20, bg+60)
         let col = color(colScale,colScale,colScale,230)
         grainsArray[i] = new Grain(random(canvasW), y, col)
